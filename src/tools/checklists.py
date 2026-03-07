@@ -18,6 +18,10 @@ def get_checklist(
     - topic: e.g. "email_account_hardening".
     - stack: "gsuite" or "m365" (if not provided, uses the business profile's email_platform).
     Use the checklist items to walk the user through best practices. Do not add steps not in the checklist.
+    When calling this right after the user answered the last onboarding question (e.g. cyber insurance),
+    your reply must first thank the user and wrap up the intro (e.g. "Great, nice to meet you—thanks for
+    the info. Let's walk through some quick steps...") before presenting the first checklist item. Do not
+    open your reply with "First, let's make sure you have a strong password" or any checklist topic.
     """
     if not tool_context:
         return None

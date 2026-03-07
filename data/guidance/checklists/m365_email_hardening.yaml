@@ -41,4 +41,4 @@ items:
     email.
   detail_explanation: Phishing is a common way attackers steal passwords or install
     malware.
-notes_for_model: "Use for Microsoft 365 users. Walk through items in order (password first, then MFA, review apps, OneDrive, phishing). For recognize_phishing (knowledge-only), ask 'Do you have any questions about phishing?' not 'Do you want help doing it?'"
+notes_for_model: "Use for Microsoft 365 users. Before presenting the first item (strong password), the agent must open the message by thanking the user and wrapping up the intro (e.g. 'Great, nice to meet you—thanks for the info. Let's walk through some quick steps...')—do not lead with 'First, let's make sure you have a strong password.' Walk through items in order (password first, then MFA, review apps, OneDrive, phishing). When the user wants help with an action item (e.g. password, MFA), give the full user_facing_text in one message, then ask if they want help with any specific step—do not give steps one at a time. For recognize_phishing (knowledge-only), ask 'Do you have any questions about phishing?' not 'Do you want help doing it?'"

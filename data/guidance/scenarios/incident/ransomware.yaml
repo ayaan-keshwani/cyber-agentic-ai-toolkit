@@ -1,0 +1,52 @@
+# Scenario: Ransomware or widespread system encryption suspected.
+id: incident_ransomware
+display_name: "Ransomware or systems locked/encrypted"
+category: incident_response
+trigger_signals:
+  - "ransomware"
+  - "files encrypted"
+  - "screen locked"
+  - "ransom note"
+  - "can't open my files"
+  - "computer locked"
+applies_to: ["us-based"]
+severity_level: critical
+source_document_id: cisa-stop-ransomware
+
+steps:
+  - id: step_1
+    short_title: "Do not pay the ransom before speaking with professionals"
+    user_facing_text: "Do not pay the ransom or contact the attackers until you have spoken with your cyber insurance carrier, an incident response firm, or law enforcement. Paying does not guarantee you get your data back and can fund further crime."
+    detail_explanation: "Authorities and insurers advise against paying; they can help you evaluate options and next steps."
+    timing: immediately
+    requires_human_professional: true
+
+  - id: step_2
+    short_title: "Contact your cyber insurance carrier"
+    user_facing_text: "If you have cyber insurance, call your carrier’s breach or incident hotline immediately. They often have approved incident response providers and can guide you through containment and recovery."
+    detail_explanation: "Many policies include breach response services; early contact is required under most policies."
+    timing: immediately
+    requires_human_professional: true
+
+  - id: step_3
+    short_title: "Isolate affected devices if you can do it safely"
+    user_facing_text: "If you can do so without touching other systems, disconnect affected computers from the network (unplug Ethernet and turn off Wi-Fi). Do not turn devices on and off repeatedly. If you have IT support, contact them to handle isolation."
+    detail_explanation: "Isolating can slow spread; avoid actions that could overwrite evidence or cause more damage."
+    timing: immediately
+    requires_human_professional: false
+
+  - id: step_4
+    short_title: "Report to authorities"
+    user_facing_text: "Report the incident to the FBI (IC3 at ic3.gov) and to CISA (report@cisa.dhs.gov). This helps with potential recovery and helps the government track threats."
+    detail_explanation: "Reporting is encouraged by CISA and the FBI and may assist with decryption options in some cases."
+    timing: within_24_hours
+    requires_human_professional: false
+
+  - id: step_5
+    short_title: "Document what you see"
+    user_facing_text: "Note when you first noticed the issue, which machines or files are affected, and take photos of any ransom note or message (do not delete yet). Share this with your insurer and any incident response provider."
+    detail_explanation: "Documentation supports investigation and insurance claims."
+    timing: within_24_hours
+    requires_human_professional: false
+
+notes_for_model: "Use when the user describes ransomware, encrypted files, or a locked screen. Emphasize not paying before professional guidance and contacting insurance. Do not give technical containment steps beyond simple isolation; direct them to their insurer or IR provider."

@@ -1,0 +1,36 @@
+# Environment and secrets (never commit API keys)
+.env
+.env.local
+.env.*.local
+
+# Local/runtime data (sessions and user-specific profiles)
+data/sessions.db
+data/business_profiles/*.json
+data/uploads/*
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+dist/
+build/
+
+# IDE / editor
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,97 @@
+# Cybersecurity Agent Toolkit for SMBs
+
+Agentic AI toolkit for small and medium business owners to improve cybersecurity hygiene and get immediate, vetted guidance during incidents. Uses **Gemini 2.5 Flash** and the **Google Agent Development Kit (ADK)**. No Vertex AI or external databases: guidance is stored in YAML/JSON and session state in a local SQLite file.
+
+## Features
+
+- **Email Account Protection agent**: Best practices for GSuite and Microsoft 365, onboarding questions, and step-by-step playbooks for unusual login, phishing, and business email compromise (BEC).
+- **Incident Support agent**: Immediate next steps for wire fraud and ransomware (e.g. contact bank, cyber insurance, report to IC3/CISA), without technical containment steps.
+- **Pre-approved guidance only**: All recommendations come from curated scenarios and checklists (FTC, CISA, etc.); the agents do not invent steps.
+- **Cyber insurance awareness**: During onboarding, users can indicate if they have cyber insurance and optionally share their policy declarations page (paste text or provide a PDF/.txt file path). The Incident Support agent uses this to direct users to contact their insurer immediately when an incident (e.g. ransomware) appears to be covered.
+- **Persistent session state**: SQLite-backed sessions so conversations and playbook progress survive restarts. Same `business_id` shares a business profile across both agents.
+- **Multi-turn and playbook progression**: Agents answer follow-up questions but, when a playbook applies, eventually work through the full list of steps.
+
+## Setup
+
+1. **Python 3.10+** and a virtual environment:
+
+   ```bash
+   python -m venv .venv
+   .venv\Scripts\activate   # Windows
+   # source .venv/bin/activate  # macOS/Linux
+   ```
+
+2. **Install dependencies**:
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Environment**: Copy `.env.example` to `.env` and set your **own** Google AI Studio API key (for Gemini 2.5 Flash). **Each person needs their own key**—the repo does not include one.
+
+   ```bash
+   copy .env.example .env
+   # Edit .env: set GOOGLE_API_KEY=your_key
+   ```
+
+   Get a free key at [Google AI Studio](https://aistudio.google.com/apikey). Keep `GOOGLE_GENAI_USE_VERTEXAI=FALSE`. Do not commit `.env` (it is in `.gitignore`).
+
+## Project layout
+
+- `data/guidance/` – YAML for source documents, scenarios (email + incident), and checklists. Edit these to add or change approved guidance.
+- `data/business_profiles/` – JSON files per business (created at runtime; not committed to git).
+- `data/sessions.db` – SQLite DB for session persistence (created on first run; not committed to git).
+- `src/agents/` – Email Protection and Incident Support ADK agents.
+- `src/tools/` – ADK tools: business profile, scenario/checklist lookup, playbook state.
+- `src/storage/` – Loading guidance from YAML and reading/writing business profiles.
+- `src/prompts/` – System instructions for each agent.
+
+## Running the CLI
+
+From the project root (with `.venv` activated and `GOOGLE_API_KEY` set):
+
+```bash
+python run_cli.py
+```
+
+You’ll choose an agent (1 = Email Protection, 2 = Incident Support), then chat in a multi-turn loop. First-time users get onboarding (business info + hygiene walkthrough) before normal use. State is persisted.
+
+**Reset memory (clean slate):** To clear your profile and all conversation history and see onboarding again as a new user:
+
+```bash
+python run_cli.py --reset
+```
+
+Then run `python run_cli.py` again without `--reset`.
+
+## Using from your own code
+
+```python
+import asyncio
+from src.app import run_agent, ensure_session, get_email_runner, get_incident_runner
+
+async def example():
+    # One turn
+    reply = await run_agent("email", business_id="acme_corp", user_message="How do I secure my GSuite account?")
+    print(reply)
+
+    # Same business_id in the incident agent sees the same profile
+    reply2 = await run_agent("incident", business_id="acme_corp", user_message="We might have sent a wire to a scammer.")
+    print(reply2)
+
+asyncio.run(example())
+```
+
+## Updating guidance
+
+- **Scenarios**: Add or edit YAML under `data/guidance/scenarios/` (e.g. `email/`, `incident/`, `fallback.yaml`). Each scenario has an `id`, `steps`, and optional `trigger_signals` and `applies_to`.
+- **Checklists**: Add or edit YAML under `data/guidance/checklists/` (e.g. `gsuite_email_hardening.yaml`, `m365_email_hardening.yaml`).
+- **Source documents**: Edit `data/guidance/source_documents.yaml` for attribution; scenario steps can reference `source_document_id`.
+
+After editing YAML, restart the app; guidance is loaded at startup (and cached).
+
+## Liability and constraints
+
+- Agents are instructed to **only** recommend actions that appear in the provided scenarios and checklists. They may explain concepts (e.g. “What is MFA?”) in their own words but must not add new actionable steps.
+- If no scenario fits, the fallback scenario directs users to contact their insurer, report to authorities, and seek professional help.
+- This toolkit is for guidance only; it does not replace legal, insurance, or incident-response advice from qualified professionals.

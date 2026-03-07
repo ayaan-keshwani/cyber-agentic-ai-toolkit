@@ -1,0 +1,67 @@
+# Scenario: User suspects they received a phishing email or clicked a suspicious link.
+# Phishing = when a hacker or someone bad tries to trick you into doing something (clicking a link, entering your password, sending money, etc.).
+id: email_phishing_suspected
+display_name: "Phishing email suspected or clicked a suspicious link"
+category: email_security
+trigger_signals:
+  - "phishing"
+  - "suspicious email"
+  - "spam email"
+  - "got a suspicious email"
+  - "received a suspicious email"
+  - "email asking for money"
+  - "email asking me for money"
+  - "email asked me for money"
+  - "email requesting money"
+  - "clicked a link in an email"
+  - "email asked for my password"
+  - "urgent email from boss or vendor asking me to do something"
+  - "fake login page"
+applies_to: ["gsuite", "m365"]
+severity_level: warning
+source_document_id: cisa-phishing
+
+steps:
+  - id: step_0
+    short_title: "First: Did you click on anything?"
+    user_facing_text: "Before we go further—did you click on any links or open any attachments in the email? This helps us know what steps you need."
+    detail_explanation: "If they clicked, we emphasize password change and checking for compromise. If not, we focus on reporting and deleting."
+    timing: immediately
+    requires_human_professional: false
+
+  - id: step_1
+    short_title: "Do not enter any more information"
+    user_facing_text: "Do not enter your password, codes, or any personal or financial information on the page you landed on. If you already did, continue to the next steps."
+    detail_explanation: "Stopping further input limits what the attacker can capture."
+    timing: immediately
+    requires_human_professional: false
+
+  - id: step_2
+    short_title: "Change passwords you entered on the suspicious site"
+    user_facing_text: "Change your email password as soon as you can. Go directly to your provider’s official website (e.g. google.com or office.com) and use the security or account settings to change your password. Use a strong, unique password. If you entered any other password on the suspicious page (e.g. for a bank, Netflix, or another site), change that password too. Go to that service's real website and use their password or security settings."
+    detail_explanation: "If the phishing page captured a password, changing it revokes the attacker's access. They may have captured any password the user typed (email, bank, social media) so all of those should be changed’."
+    timing: immediately
+    requires_human_professional: false
+
+  - id: step_3
+    short_title: "Enable MFA if not already on"
+    user_facing_text: "Turn on multi-factor authentication (MFA) for your email so that a second step (e.g. a code on your phone) is required to sign in."
+    detail_explanation: "MFA greatly reduces the risk of someone using a stolen password."
+    timing: immediately
+    requires_human_professional: false
+
+  - id: step_4
+    short_title: "Check for unauthorized activity"
+    user_facing_text: "Check your email settings (e.g. forwarding rules, connected apps) and recent sent mail. Remove any forwarding rules or connected apps you didn’t add, and look for emails you didn’t send."
+    detail_explanation: "Phishers often add forwarding or connected apps to maintain access or monitor your mail."
+    timing: within_24_hours
+    requires_human_professional: false
+
+  - id: step_5
+    short_title: "Report and delete the phishing email"
+    user_facing_text: "Report the message as phishing using your email provider’s option (e.g. 'Report phishing'), then delete it. If it’s a work account, notify your IT contact or manager."
+    detail_explanation: "Reporting helps the provider block similar messages for you and others."
+    timing: within_24_hours
+    requires_human_professional: false
+
+notes_for_model: "Use when the user says they got a suspicious email, clicked a link, or entered information on a page they’re not sure about. Phishing is when a hacker or someone bad tries to trick you into doing something. Start with step_0: ask if they clicked on anything. Then work through steps in order. If they clicked or entered a password, emphasize step_2 (change email password AND any other password they typed on the fake page—bank, Netflix, etc.) and MFA (step_3). If they did NOT click, you can move more quickly to report and delete (step_5)."

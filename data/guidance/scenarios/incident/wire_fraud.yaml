@@ -1,0 +1,52 @@
+# Scenario: Wire fraud or unauthorized transfer – money already sent or attempt in progress.
+id: incident_wire_fraud
+display_name: "Wire fraud or unauthorized money transfer"
+category: incident_response
+trigger_signals:
+  - "wired money to wrong account"
+  - "wire fraud"
+  - "unauthorized transfer"
+  - "sent payment to scammer"
+  - "bank account changed by email"
+  - "lost money to fraud"
+applies_to: ["us-based"]
+severity_level: critical
+source_document_id: ftc-small-business
+
+steps:
+  - id: step_1
+    short_title: "Contact your bank or payment provider immediately"
+    user_facing_text: "Call your bank’s fraud department or your payment provider right away. Tell them you believe a transfer was fraudulent or sent to the wrong party. They may be able to attempt a recall or freeze."
+    detail_explanation: "Banks have short windows to attempt wire recalls; acting quickly is critical."
+    timing: immediately
+    requires_human_professional: true
+
+  - id: step_2
+    short_title: "Contact your cyber insurance carrier"
+    user_facing_text: "If you have cyber insurance, call your carrier’s breach or incident hotline as soon as possible. They can guide you on coverage and next steps, and may require prompt notice."
+    detail_explanation: "Policies often require timely notice; the carrier can also help coordinate response."
+    timing: immediately
+    requires_human_professional: true
+
+  - id: step_3
+    short_title: "Report to law enforcement"
+    user_facing_text: "Report the incident to the FBI’s Internet Crime Complaint Center (IC3) at ic3.gov. You may also report to your local law enforcement or state attorney general’s office, especially for business-related fraud."
+    detail_explanation: "Reporting helps law enforcement track trends and sometimes recover funds; it also creates a record for insurance or legal purposes."
+    timing: within_24_hours
+    requires_human_professional: false
+
+  - id: step_4
+    short_title: "Document what happened"
+    user_facing_text: "Write down what happened: when you received the request, what you did, amounts, account numbers (if safe to store), and any emails or messages. Keep this for your bank, insurer, and law enforcement."
+    detail_explanation: "Accurate documentation supports recovery efforts and insurance claims."
+    timing: within_24_hours
+    requires_human_professional: false
+
+  - id: step_5
+    short_title: "Secure email and prevent repeat"
+    user_facing_text: "Work with your IT provider or email administrator to check for compromised email accounts, enable MFA where possible, and reinforce policies about verifying payment or wire requests through a separate channel (e.g. phone) before sending money."
+    detail_explanation: "Many wire fraud cases start with compromised or spoofed email; securing email reduces future risk."
+    timing: within_24_hours
+    requires_human_professional: false
+
+notes_for_model: "Use when the user says they have already sent money or that a transfer was fraudulent. Emphasize immediate actions (bank, insurer). Do not give legal or financial advice beyond these steps; direct them to their bank and insurer."

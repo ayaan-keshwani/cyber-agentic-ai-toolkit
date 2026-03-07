@@ -1,0 +1,52 @@
+# Scenario: User sees an alert about an unusual or suspicious login to their email.
+id: email_unusual_login_detected
+display_name: "Unusual or suspicious login detected on email account"
+category: email_security
+trigger_signals:
+  - "unusual login"
+  - "suspicious login"
+  - "login from unknown location"
+  - "login from another country"
+  - "someone else logged into my email"
+  - "Google/Microsoft sent an alert about a new sign-in"
+applies_to: ["gsuite", "m365"]
+severity_level: warning
+source_document_id: cisa-phishing
+
+steps:
+  - id: step_1
+    short_title: "Confirm it's a real alert"
+    user_facing_text: "Check that the login alert came from your actual email provider (Google or Microsoft), not from an email or link. Log in by typing the official website yourself (e.g. google.com or office.com) rather than clicking links in the message."
+    detail_explanation: "Phishers sometimes send fake 'unusual login' emails to trick you into entering your password. Always go to the provider’s site directly."
+    timing: immediately
+    requires_human_professional: false
+
+  - id: step_2
+    short_title: "Change your password"
+    user_facing_text: "Change your email password right away using your provider’s security settings. Use a strong, unique password that you don’t use anywhere else."
+    detail_explanation: "If someone else had access, changing the password revokes their access. A unique password limits damage if that password was leaked elsewhere."
+    timing: immediately
+    requires_human_professional: false
+
+  - id: step_3
+    short_title: "Turn on MFA (multi-factor authentication)"
+    user_facing_text: "Turn on multi-factor authentication (MFA) for your email account. This means you’ll need a second check (like a code on your phone) when signing in, which greatly reduces the chance of someone else getting in."
+    detail_explanation: "MFA adds a second layer of protection so that even if someone has your password, they still need your phone or another factor."
+    timing: immediately
+    requires_human_professional: false
+
+  - id: step_4
+    short_title: "Review recent activity"
+    user_facing_text: "In your email account’s security or activity page, review recent sign-ins and devices. Sign out any sessions or devices you don’t recognize."
+    detail_explanation: "Your provider (Google/Microsoft) lets you see where and when your account was used so you can remove unknown access."
+    timing: within_24_hours
+    requires_human_professional: false
+
+  - id: step_5
+    short_title: "Notify your team if it’s a work account"
+    user_facing_text: "If this is a work or business email account, tell your IT contact or business owner so they can check for any misuse (e.g. sent emails, changed settings) and help secure the account."
+    detail_explanation: "Business accounts may have been used to send phishing emails or access shared data; early reporting limits harm."
+    timing: within_24_hours
+    requires_human_professional: false
+
+notes_for_model: "Use this when the user describes an alert or notification about a login they don’t recognize. Work through the steps in order; you may explain what MFA is if they ask."

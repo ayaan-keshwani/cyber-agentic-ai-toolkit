@@ -1,0 +1,15 @@
+# Agent Development Kit and Gemini
+google-adk>=1.25.0
+google-genai>=1.0.0
+
+# Session persistence (local SQLite, no Vertex AI)
+aiosqlite>=0.20.0
+
+# Guidance loading
+PyYAML>=6.0
+
+# Environment
+python-dotenv>=1.0.0
+
+# PDF extraction for insurance declarations
+pypdf>=4.0.0

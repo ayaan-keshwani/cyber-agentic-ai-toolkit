@@ -1,0 +1,46 @@
+# Scenario: Business Email Compromise (BEC) suspected – e.g. fake request to wire money or change payment details.
+id: email_bec_suspected
+display_name: "Business email compromise (BEC) suspected – wire transfer or payment request"
+category: email_security
+trigger_signals:
+  - "wire transfer"
+  - "boss asked me to send money"
+  - "vendor changed bank account"
+  - "urgent payment request by email"
+  - "CEO wants me to buy gift cards"
+  - "business email compromise"
+  - "someone impersonating my boss"
+applies_to: ["gsuite", "m365"]
+severity_level: critical
+source_document_id: ftc-small-business
+
+steps:
+  - id: step_1
+    short_title: "Do not send money or change payment details yet"
+    user_facing_text: "Do not wire money, send gift cards, or change bank account or payment details based only on an email or message. Even if it looks like it’s from your boss or a vendor, stop and verify through a separate channel."
+    detail_explanation: "BEC attacks rely on urgency and fake authority. Pausing prevents irreversible loss."
+    timing: immediately
+    requires_human_professional: false
+
+  - id: step_2
+    short_title: "Verify using a different channel"
+    user_facing_text: "Contact the person or vendor using a phone number or method you already have (not from the email). For example, call your boss on their known number or call the vendor’s main line and ask if they really sent the request."
+    detail_explanation: "Verifying out-of-band (phone, in person) avoids relying on the potentially compromised email channel."
+    timing: immediately
+    requires_human_professional: false
+
+  - id: step_3
+    short_title: "If you already sent money – act immediately"
+    user_facing_text: "If you already sent money or changed payment details, contact your bank or payment provider immediately and report it as fraud. Also contact your cyber insurance carrier if you have a policy, and consider reporting to the FBI IC3 (ic3.gov) and your state authorities."
+    detail_explanation: "Quick reporting can sometimes help recover funds or limit further loss; insurers and law enforcement need to be notified promptly."
+    timing: immediately
+    requires_human_professional: true
+
+  - id: step_4
+    short_title: "Report and secure email"
+    user_facing_text: "Report the suspicious email to your IT contact or email provider. If you have a work account, your organization may need to check for other compromised accounts and reset passwords or enable MFA."
+    detail_explanation: "BEC often involves compromised or spoofed accounts; securing email helps prevent repeat incidents."
+    timing: within_24_hours
+    requires_human_professional: false
+
+notes_for_model: "Use when the user describes a request (especially for wire transfer, gift cards, or payment changes) that came by email and seems to be from a boss or vendor. Treat as high urgency. If money was already sent, emphasize step 3 and getting professional help."

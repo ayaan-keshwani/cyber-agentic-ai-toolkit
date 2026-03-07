@@ -1,0 +1,31 @@
+# Authoritative sources for recommendations. Referenced by scenario and checklist steps.
+# Update with real URLs and excerpts as you add more guidance.
+
+sources:
+  - id: ftc-small-business
+    name: "FTC – Protecting Small Businesses from Scams"
+    url: "https://www.ftc.gov/business-guidance/resources/protecting-small-businesses-scams"
+    provider: FTC
+    jurisdictions: ["US"]
+    topics: ["phishing", "scams", "business-email-compromise", "wire-fraud"]
+
+  - id: cisa-stop-ransomware
+    name: "CISA – Stop Ransomware"
+    url: "https://www.cisa.gov/stopransomware"
+    provider: CISA
+    jurisdictions: ["US"]
+    topics: ["ransomware", "incident-response"]
+
+  - id: cisa-phishing
+    name: "CISA – Avoiding Social Engineering and Phishing Attacks"
+    url: "https://www.cisa.gov/news-events/news/avoiding-social-engineering-and-phishing-attacks"
+    provider: CISA
+    jurisdictions: ["US"]
+    topics: ["phishing", "social-engineering"]
+
+  - id: ic3-fbi
+    name: "FBI IC3 – Internet Crime Complaint Center"
+    url: "https://www.ic3.gov/"
+    provider: FBI
+    jurisdictions: ["US"]
+    topics: ["wire-fraud", "business-email-compromise", "reporting"]

@@ -6,9 +6,13 @@ category: email_security
 trigger_signals:
   - "phishing"
   - "suspicious email"
+  - "weird email"
+  - "weird emails"
   - "spam email"
   - "got a suspicious email"
   - "received a suspicious email"
+  - "got a weird email"
+  - "received a weird email"
   - "email asking for money"
   - "email asking me for money"
   - "email asked me for money"
@@ -31,22 +35,22 @@ steps:
 
   - id: step_1
     short_title: "Do not enter any more information"
-    user_facing_text: "Do not enter your password, codes, or any personal or financial information on the page you landed on. If you already did, continue to the next steps."
-    detail_explanation: "Stopping further input limits what the attacker can capture."
+    user_facing_text: "Do not enter your password, codes, or any personal or financial information on the page you landed on. If you already did, we'll help you change those in the next steps. Can you confirm—did you enter any password or other info on that page?"
+    detail_explanation: "Stopping further input limits what the attacker can capture. Ask for confirmation so the user knows to respond; if they did enter info, we emphasize password change next."
     timing: immediately
     requires_human_professional: false
 
   - id: step_2
     short_title: "Change passwords you entered on the suspicious site"
-    user_facing_text: "Change your email password as soon as you can. Go directly to your provider’s official website (e.g. google.com or office.com) and use the security or account settings to change your password. Use a strong, unique password. If you entered any other password on the suspicious page (e.g. for a bank, Netflix, or another site), change that password too. Go to that service's real website and use their password or security settings."
+    user_facing_text: "AGENT: Call get_checklist (topic email_account_hardening, stack from get_business_profile). Use the strong_password item's user_facing_text for the email password change. Do NOT say 'go to google.com or office.com'—use myaccount.google.com (GSuite) or account.microsoft.com (M365) with the exact steps from the checklist. Also remind them: if they entered any other password on the suspicious page (e.g. bank, Netflix), change that at that service's real website."
     detail_explanation: "If the phishing page captured a password, changing it revokes the attacker's access. They may have captured any password the user typed (email, bank, social media) so all of those should be changed’."
     timing: immediately
     requires_human_professional: false
 
   - id: step_3
     short_title: "Enable MFA if not already on"
-    user_facing_text: "Turn on multi-factor authentication (MFA) for your email so that a second step (e.g. a code on your phone) is required to sign in."
-    detail_explanation: "MFA greatly reduces the risk of someone using a stolen password."
+    user_facing_text: "CRITICAL: Do NOT ask the user 'Do you have MFA?' or 'Is MFA on?'—you MUST call get_business_profile first. If has_mfa_for_all_users is true, skip this step entirely: say 'We already have MFA enabled, so let's check for unauthorized activity' and advance to step_4. Only if has_mfa_for_all_users is false or null: Turn on multi-factor authentication (MFA) for your email so that a second step (e.g. a code on your phone) is required to sign in."
+    detail_explanation: "MFA greatly reduces the risk of someone using a stolen password. You MUST check the profile first—if they already have MFA, skip this step entirely."
     timing: immediately
     requires_human_professional: false
 
@@ -64,4 +68,4 @@ steps:
     timing: within_24_hours
     requires_human_professional: false
 
-notes_for_model: "Use when the user says they got a suspicious email, clicked a link, or entered information on a page they’re not sure about. Phishing is when a hacker or someone bad tries to trick you into doing something. Start with step_0: ask if they clicked on anything. Then work through steps in order. If they clicked or entered a password, emphasize step_2 (change email password AND any other password they typed on the fake page—bank, Netflix, etc.) and MFA (step_3). If they did NOT click, you can move more quickly to report and delete (step_5)."
+notes_for_model: "Use when the user says they got a suspicious email, weird email, phishing, clicked a link, or entered information on a page they’re not sure about. Treat 'weird email' the same as suspicious email. Phishing is when a hacker or someone bad tries to trick you into doing something. Start with step_0: ask if they clicked on anything. Then work through steps in order. For step_1, always include the confirmation question so the user knows to respond. Before step_3 (MFA): call get_business_profile. If has_mfa_for_all_users is true (they said they have MFA at any point—onboarding, this playbook, or earlier), skip step_3—say something like 'We already have MFA enabled, so let's check for unauthorized activity' and go to step_4. Use advance_playbook_step to skip step_3. When they say they've enabled MFA or completed it at this step, save has_mfa_for_all_users: true with update_business_profile. For step_2 (change email password): call get_checklist with topic 'email_account_hardening' and the user's email_platform from get_business_profile. Use the strong_password item's user_facing_text from that checklist for the email password change—it has provider-specific instructions (myaccount.google.com for GSuite, account.microsoft.com for M365). Also remind them: if they entered any other password on the suspicious page (e.g. bank, Netflix), change that too at that service's real website. If they clicked or entered a password, emphasize step_2 and MFA (step_3). If they did NOT click, you can move more quickly to report and delete (step_5). If giving any summary: items they said IT has to do go only in the IT list, never in what they did."

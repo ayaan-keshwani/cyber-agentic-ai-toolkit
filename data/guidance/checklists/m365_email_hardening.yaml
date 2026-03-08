@@ -1,34 +1,46 @@
-# Checklist: Microsoft 365 email account hardening.
 id: m365_email_hardening
-display_name: "Microsoft 365 email security basics"
+display_name: Microsoft 365 email security basics
 topic: email_account_hardening
 applies_to: m365
 source_document_id: cisa-phishing
-
+# When presenting this checklist right after the user answers "Do you have cybersecurity insurance?", say this first.
+transition_after_q6: "Great, nice to meet you! Thanks for the info. Let's walk through some quick steps to help keep your email and account in good shape."
 items:
-  - id: strong_password
-    short_title: "Use a strong, unique password"
-    user_facing_text: "It's best to have a strong password that you don’t use for any other site or app. Consider a password manager to generate and store it. If you don't have a strong password, you can change it by going to account.microsoft.com, clicking Security, then Password security. Follow the prompts to change it."
-    detail_explanation: "Reused or weak passwords are common causes of account compromise. Frame as: it's best to have a strong password; if not, here's how to change it."
-
-  - id: mfa
-    short_title: "Turn on MFA (multi-factor authentication)"
-    user_facing_text: "Enable multi-factor authentication for your Microsoft account. In the Microsoft 365 admin center or account security settings, turn on MFA (e.g. Microsoft Authenticator app or another method). Prefer an authenticator app over SMS when possible."
-    detail_explanation: "MFA greatly reduces the risk of someone logging in with a stolen password."
-
-  - id: review_apps
-    short_title: "Review connected apps and permissions"
-    user_facing_text: "In your Microsoft account or Azure AD app consent settings (if you have admin access), review apps that have access to your mail or data. Remove any you don’t recognize or no longer use."
-    detail_explanation: "Old or malicious connected apps can read or misuse your email."
-
-  - id: avoid_sensitive_email
-    short_title: "Avoid sending sensitive files or data via email when possible"
-    user_facing_text: "OneDrive is a place online where you can store your files, like documents and photos. Instead of attaching a file to an email, you can put it in OneDrive and then choose exactly who can see or edit it. For sensitive or confidential files, use OneDrive or SharePoint sharing with specific people and appropriate permissions instead of attaching files to email. Email can be forwarded or compromised."
-    detail_explanation: "Email is easy to forward or leak; secure sharing links are safer for sensitive data."
-
-  - id: recognize_phishing
-    short_title: "Know how to spot phishing"
-    user_facing_text: "Be cautious of urgent or unexpected emails asking you to click a link, open a file, or enter your password. Check the sender address and, when in doubt, go to the service’s website directly instead of clicking links in the email."
-    detail_explanation: "Phishing is a common way attackers steal passwords or install malware."
-
-notes_for_model: "Use for Microsoft 365 users. Walk through items in order (password first, then MFA, review apps, OneDrive, phishing). For recognize_phishing (knowledge-only), ask 'Do you have any questions about phishing?' not 'Do you want help doing it?'"
+- id: strong_password
+  short_title: Use a strong, unique password
+  user_facing_text: It's best to have a strong password that you don't use for any
+    other site or app. Consider a password manager to generate and store it. If you
+    don't have a strong password, you can change it by going to account.microsoft.com,
+    clicking Security, then Password security. You may need to sign in again. Enter
+    your new password and follow the prompts to change it.
+  detail_explanation: 'Reused or weak passwords are common causes of account compromise.
+    Frame as: it''s best to have a strong password; if not, here''s how to change
+    it.'
+- id: mfa
+  short_title: Turn on MFA (multi-factor authentication)
+  user_facing_text: Enable multi-factor authentication (Microsoft's MFA) for your
+    Microsoft account. In your Microsoft account, go to Security > Two-step verification
+    and follow the steps. Prefer an authenticator app or security key over SMS when
+    possible.
+  detail_explanation: MFA greatly reduces the risk of someone logging in with a stolen
+    password.
+- id: review_apps
+  short_title: Review connected apps and access
+  user_facing_text: In your Microsoft account, check Security (and similar) for third-party
+    apps with account access. Remove any apps or services you don't recognize or no
+    longer use.
+  detail_explanation: Old or malicious connected apps can read or misuse your email.
+- id: avoid_sensitive_email
+  short_title: Avoid sending sensitive files or data via email when possible
+  user_facing_text: "OneDrive is a place online where you can store your files, like documents and photos. Instead of attaching a file to an email, you can put it in OneDrive and then choose exactly who can see or edit it. For sensitive or confidential files, use OneDrive or SharePoint sharing with specific people and expiration or access controls instead of attaching files to email. Email can be forwarded or compromised."
+  detail_explanation: Email is easy to forward or leak; OneDrive or SharePoint links
+    with limited access are safer for sensitive data.
+- id: recognize_phishing
+  short_title: Know how to spot phishing
+  user_facing_text: Be cautious of urgent or unexpected emails asking you to click
+    a link, open a file, or enter your password. Check the sender address and, when
+    in doubt, go to the service's website directly instead of clicking links in the
+    email.
+  detail_explanation: Phishing is a common way attackers steal passwords or install
+    malware.
+notes_for_model: "Use for Microsoft 365 users. This checklist includes transition_after_q6. When you present this checklist right after the user answered question 6 (cybersecurity insurance), you MUST say the transition_after_q6 text first, then the first checklist item. Do not skip it; do not lead with 'First, let's make sure you have a strong password.' Walk through items in order (password first, then MFA, review apps, OneDrive, phishing). Before presenting the MFA item, call get_business_profile—if has_mfa_for_all_users is true, skip MFA and use a transition to the next item (e.g. 'We already have MFA enabled, so let's review connected apps...'). When the user says they have MFA (already done, yes, just enabled it), save has_mfa_for_all_users: true. When moving to the next item (starting after password), use a brief transition like 'Great! Next, we'll turn on MFA...' or 'Sounds good! Next, let's review connected apps...' before presenting the next item. When the user wants help with an action item (e.g. password, MFA), give the full user_facing_text in one message, then ask if they want help with any specific step—do not give steps one at a time. For recognize_phishing (knowledge-only), ask 'Do you have any questions about phishing?' not 'Do you want help doing it?' In the final summary: 'What you did' = only items they completed or skipped; do NOT include items they said IT has to do. Those go only in 'Action items for IT staff.'"

@@ -1,6 +1,6 @@
-# Scenario: User sees an alert about an unusual or suspicious login to their email.
+# Scenario: User sees an alert about an unusual or suspicious login, or an unauthorized password change.
 id: email_unusual_login_detected
-display_name: "Unusual or suspicious login detected on email account"
+display_name: "Unusual login or unauthorized password change"
 category: email_security
 trigger_signals:
   - "unusual login"
@@ -9,6 +9,9 @@ trigger_signals:
   - "login from another country"
   - "someone else logged into my email"
   - "Google/Microsoft sent an alert about a new sign-in"
+  - "password change notification"
+  - "password changed"
+  - "unauthorized password change"
 applies_to: ["gsuite", "m365"]
 severity_level: warning
 source_document_id: cisa-phishing
@@ -16,29 +19,29 @@ source_document_id: cisa-phishing
 steps:
   - id: step_1
     short_title: "Confirm it's a real alert"
-    user_facing_text: "Check that the login alert came from your actual email provider (Google or Microsoft), not from an email or link. Log in by typing the official website yourself (e.g. google.com or office.com) rather than clicking links in the message."
+    user_facing_text: "Check that the alert or notification came from your actual email provider (Google or Microsoft), not from an email or link. Log in by typing the official website yourself (e.g. google.com or office.com) rather than clicking links in the message."
     detail_explanation: "Phishers sometimes send fake 'unusual login' emails to trick you into entering your password. Always go to the provider’s site directly."
     timing: immediately
     requires_human_professional: false
 
   - id: step_2
     short_title: "Change your password"
-    user_facing_text: "Change your email password right away using your provider’s security settings. Use a strong, unique password that you don’t use anywhere else."
+    user_facing_text: "AGENT: Call get_checklist (topic email_account_hardening, stack from get_business_profile). Use the strong_password item's user_facing_text for the email password change. Do NOT say 'go to google.com or office.com'—use myaccount.google.com (GSuite) or account.microsoft.com (M365) with the exact steps from the checklist."
     detail_explanation: "If someone else had access, changing the password revokes their access. A unique password limits damage if that password was leaked elsewhere."
     timing: immediately
     requires_human_professional: false
 
   - id: step_3
     short_title: "Turn on MFA (multi-factor authentication)"
-    user_facing_text: "Turn on multi-factor authentication (MFA) for your email account. This means you’ll need a second check (like a code on your phone) when signing in, which greatly reduces the chance of someone else getting in."
+    user_facing_text: "CRITICAL: Do NOT ask the user 'Do you have MFA?' or 'Is MFA on?'—you MUST call get_business_profile first. If has_mfa_for_all_users is true, skip this step entirely: say 'We already have MFA enabled, so let's review recent activity' and advance to step_4. Only if has_mfa_for_all_users is false or null: Turn on multi-factor authentication (MFA) for your email account. This means you'll need a second check (like a code on your phone) when signing in, which greatly reduces the chance of someone else getting in."
     detail_explanation: "MFA adds a second layer of protection so that even if someone has your password, they still need your phone or another factor."
     timing: immediately
     requires_human_professional: false
 
   - id: step_4
-    short_title: "Review recent activity"
-    user_facing_text: "In your email account’s security or activity page, review recent sign-ins and devices. Sign out any sessions or devices you don’t recognize."
-    detail_explanation: "Your provider (Google/Microsoft) lets you see where and when your account was used so you can remove unknown access."
+    short_title: "Review recent activity and forwarding rules"
+    user_facing_text: "In your email account's security or activity page, review recent sign-ins and devices. Sign out any sessions or devices you don't recognize. Also check your email forwarding rules and connected apps—remove any forwarding rules or connected apps you didn't add. Look for emails you didn't send in your sent folder."
+    detail_explanation: "Attackers who gain access often add forwarding rules or connected apps to maintain access or monitor mail. Your provider lets you see sign-ins and devices so you can remove unknown access."
     timing: within_24_hours
     requires_human_professional: false
 
@@ -49,4 +52,4 @@ steps:
     timing: within_24_hours
     requires_human_professional: false
 
-notes_for_model: "Use this when the user describes an alert or notification about a login they don’t recognize. Work through the steps in order; you may explain what MFA is if they ask."
+notes_for_model: "Use this when the user describes an alert or notification about a login they don’t recognize, or a password change notification they didn’t request. Work through the steps in order; you may explain what MFA is if they ask. For step_2 (password): call get_checklist with topic 'email_account_hardening' and the user's email_platform from get_business_profile. Use the strong_password item's user_facing_text—myaccount.google.com (GSuite) or account.microsoft.com (M365). Do NOT say 'go to google.com or office.com'. For step_3 (MFA): call get_business_profile first. Do NOT ask the user if they have MFA—check the profile. If has_mfa_for_all_users is true, skip step_3—say 'We already have MFA enabled, so let's review recent activity' and go to step_4. Use advance_playbook_step to skip step_3. When they say they've enabled MFA or completed it, save has_mfa_for_all_users: true. If giving any summary: items they said IT has to do go only in the IT list, never in what they did."

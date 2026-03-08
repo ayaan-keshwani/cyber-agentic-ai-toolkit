@@ -141,12 +141,18 @@ async def run_agent(
     ):
         if not event.is_final_response() or not event.content or not event.content.parts:
             continue
+        event_text = ""
         for part in event.content.parts:
             if getattr(part, "function_call", None):
                 continue
             if hasattr(part, "text") and part.text:
-                final_text += part.text
-    return final_text.strip() or "(No response generated)"
+                event_text += part.text
+        if event_text:
+            final_text = event_text
+    text = final_text.strip()
+    if not text:
+        return "I didn't quite catch that. Could you tell me a bit more so I can help?"
+    return text
 
 
 async def run_agent_stream(
@@ -229,6 +235,22 @@ def _welcome_back_message(agent_type: str | None, business_id: str) -> str:
     return greeting
 
 
+def _agent_selected_message(agent_type: str) -> str:
+    """Welcome message shown after user selects an agent, so they know which agent they're talking to."""
+    if agent_type == "incident":
+        return (
+            "You're now connected to the Incident Support agent. "
+            "I can help with serious cyber incidents like wire fraud and ransomware, "
+            "and direct you to the right professionals (bank, insurer, authorities). "
+            "What's going on?"
+        )
+    return (
+        "You're now connected to the Email Protection agent. "
+        "I can help keep your email secure and assist with suspicious emails, unusual logins, and phishing. "
+        "What do you need help with?"
+    )
+
+
 async def main_cli() -> None:
     """CLI: first-time users get onboarding before agent choice; returning users choose agent."""
     ensure_dirs()
@@ -246,9 +268,17 @@ async def main_cli() -> None:
     else:
         print(f"Agent: {_welcome_back_message(None, business_id)}\n")
         print("Agent: 1 = Email Protection, 2 = Incident Support")
-        choice = input("Choose (1 or 2): ").strip()
-        agent_type = "incident" if choice == "2" else "email"
+        while True:
+            choice = input("Choose (1 or 2): ").strip()
+            if choice == "1":
+                agent_type = "email"
+                break
+            if choice == "2":
+                agent_type = "incident"
+                break
+            print("Agent: Please enter 1 or 2.")
         print()
+        print(f"Agent: {_agent_selected_message(agent_type)}\n")
     print("(Type 'quit' or 'exit' anytime to end the conversation.)\n")
 
     while True:

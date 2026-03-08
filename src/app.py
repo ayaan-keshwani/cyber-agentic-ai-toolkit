@@ -141,12 +141,9 @@ async def run_agent(
     ):
         if not event.is_final_response() or not event.content or not event.content.parts:
             continue
-        has_function_call = any(
-            getattr(p, "function_call", None) for p in event.content.parts
-        )
-        if has_function_call:
-            continue
         for part in event.content.parts:
+            if getattr(part, "function_call", None):
+                continue
             if hasattr(part, "text") and part.text:
                 final_text += part.text
     return final_text.strip() or "(No response generated)"

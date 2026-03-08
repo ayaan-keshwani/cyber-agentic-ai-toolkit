@@ -6,9 +6,13 @@ category: email_security
 trigger_signals:
   - "phishing"
   - "suspicious email"
+  - "weird email"
+  - "weird emails"
   - "spam email"
   - "got a suspicious email"
   - "received a suspicious email"
+  - "got a weird email"
+  - "received a weird email"
   - "email asking for money"
   - "email asking me for money"
   - "email asked me for money"
@@ -64,4 +68,4 @@ steps:
     timing: within_24_hours
     requires_human_professional: false
 
-notes_for_model: "Use when the user says they got a suspicious email, clicked a link, or entered information on a page they’re not sure about. Phishing is when a hacker or someone bad tries to trick you into doing something. Start with step_0: ask if they clicked on anything. Then work through steps in order. If they clicked or entered a password, emphasize step_2 (change email password AND any other password they typed on the fake page—bank, Netflix, etc.) and MFA (step_3). If they did NOT click, you can move more quickly to report and delete (step_5)."
+notes_for_model: "Use when the user says they got a suspicious email, weird email, phishing, clicked a link, or entered information on a page they’re not sure about. Treat 'weird email' the same as suspicious email. Phishing is when a hacker or someone bad tries to trick you into doing something. Start with step_0: ask if they clicked on anything. Then work through steps in order. If they clicked or entered a password, emphasize step_2 (change email password AND any other password they typed on the fake page—bank, Netflix, etc.) and MFA (step_3). If they did NOT click, you can move more quickly to report and delete (step_5)."

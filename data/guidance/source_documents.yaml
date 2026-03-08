@@ -3,15 +3,15 @@
 
 sources:
   - id: ftc-small-business
-    name: "FTC – Protecting Small Businesses from Scams"
-    url: "https://www.ftc.gov/business-guidance/resources/protecting-small-businesses-scams"
+    name: "Scams and Your Small Business: A Guide for Business"
+    url: "https://www.ftc.gov/business-guidance/resources/scams-your-small-business-guide-business"
     provider: FTC
     jurisdictions: ["US"]
     topics: ["phishing", "scams", "business-email-compromise", "wire-fraud"]
 
   - id: cisa-stop-ransomware
-    name: "CISA – Stop Ransomware"
-    url: "https://www.cisa.gov/stopransomware"
+    name: "CISA – Stop Ransomware Guide"
+    url: "https://www.cisa.gov/sites/default/files/2025-03/StopRansomware-Guide%20508.pdf"
     provider: CISA
     jurisdictions: ["US"]
     topics: ["ransomware", "incident-response"]

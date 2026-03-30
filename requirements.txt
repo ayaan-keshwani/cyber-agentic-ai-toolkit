@@ -11,5 +11,10 @@ PyYAML>=6.0
 # Environment
 python-dotenv>=1.0.0
 
+# Web UI (FastAPI + static React build)
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+python-multipart>=0.0.12
+
 # PDF extraction for insurance declarations
 pypdf>=4.0.0

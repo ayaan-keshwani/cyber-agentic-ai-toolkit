@@ -3,14 +3,19 @@ display_name: Microsoft 365 email security basics
 topic: email_account_hardening
 applies_to: m365
 source_document_id: cisa-phishing
-# When presenting this checklist right after the user answers "Do you have cybersecurity insurance?", say this first.
+# When presenting this checklist right after the user answers "Do you have cybersecurity insurance?" (no insurance, or yes but skipping upload now), say this first.
 transition_after_q6: "Great, nice to meet you! Thanks for the info. Let's walk through some quick steps to help keep your email and account in good shape."
+transition_after_insurance_upload: "Thanks for the info! Let's walk through some quick steps to help keep your email and account in good shape."
+strong_password_reset_only: |
+  Open https://account.microsoft.com in your browser.
+  Sign in if asked.
+  Go to Security, then Password security. Follow the prompts to change your password.
 items:
 - id: strong_password
   short_title: Use a strong, unique password
   user_facing_text: It's best to have a strong password that you don't use for any
     other site or app. Consider a password manager to generate and store it. If you
-    don't have a strong password, you can change it by going to account.microsoft.com,
+    don't have a strong password, you can change it by going to https://account.microsoft.com,
     clicking Security, then Password security. You may need to sign in again. Enter
     your new password and follow the prompts to change it.
   detail_explanation: 'Reused or weak passwords are common causes of account compromise.
@@ -18,17 +23,20 @@ items:
     it.'
 - id: mfa
   short_title: Turn on MFA (multi-factor authentication)
-  user_facing_text: Enable multi-factor authentication (Microsoft's MFA) for your
-    Microsoft account. In your Microsoft account, go to Security > Two-step verification
-    and follow the steps. Prefer an authenticator app or security key over SMS when
-    possible.
+  user_facing_text: |
+    Multi-factor authentication (MFA) means you sign in with your password and then a second step—like a code from an app on your phone or a short text. That extra step makes it much harder for someone else to get into your account with only your password.
+
+    It really matters because even if someone steals or guesses your password, they still can’t finish signing in without that second step.
+
+    Enable multi-factor authentication (Microsoft's MFA) for your Microsoft account. Go to https://account.microsoft.com — open Security, then Two-step verification, and follow the steps. Prefer an authenticator app or security key over SMS when possible.
   detail_explanation: MFA greatly reduces the risk of someone logging in with a stolen
     password.
 - id: review_apps
   short_title: Review connected apps and access
-  user_facing_text: In your Microsoft account, check Security (and similar) for third-party
-    apps with account access. Remove any apps or services you don't recognize or no
-    longer use.
+  user_facing_text: |
+    Connected apps can access your Microsoft account in ways you might not notice day to day. If something on the list looks unfamiliar, it can be a risk—attackers sometimes try to get people to connect bad apps, and old apps you forgot about can still have access.
+
+    Go to https://account.microsoft.com — Security (and similar) for third-party apps with account access. Remove any apps or services you don't recognize or no longer use.
   detail_explanation: Old or malicious connected apps can read or misuse your email.
 - id: avoid_sensitive_email
   short_title: Avoid sending sensitive files or data via email when possible
@@ -37,10 +45,10 @@ items:
     with limited access are safer for sensitive data.
 - id: recognize_phishing
   short_title: Know how to spot phishing
-  user_facing_text: Be cautious of urgent or unexpected emails asking you to click
-    a link, open a file, or enter your password. Check the sender address and, when
-    in doubt, go to the service's website directly instead of clicking links in the
-    email.
+  user_facing_text: |
+    Phishing is when someone tries to trick you into giving them personal information, like your password or bank details. They often send fake emails or messages that look like they're from a trusted company or person. They might try to scare you or make you curious so you click a link or open an attachment that could harm your computer or steal your information.
+
+    Be cautious of urgent or unexpected emails asking you to click a link, open a file, or enter your password. Check the sender address and, when in doubt, go to the service's website directly instead of clicking links in the email.
   detail_explanation: Phishing is a common way attackers steal passwords or install
     malware.
-notes_for_model: "Use for Microsoft 365 users. This checklist includes transition_after_q6. When you present this checklist right after the user answered question 6 (cybersecurity insurance), you MUST say the transition_after_q6 text first, then the first checklist item. Do not skip it; do not lead with 'First, let's make sure you have a strong password.' Walk through items in order (password first, then MFA, review apps, OneDrive, phishing). Before presenting the MFA item, call get_business_profile—if has_mfa_for_all_users is true, skip MFA and use a transition to the next item (e.g. 'We already have MFA enabled, so let's review connected apps...'). When the user says they have MFA (already done, yes, just enabled it), save has_mfa_for_all_users: true. When moving to the next item (starting after password), use a brief transition like 'Great! Next, we'll turn on MFA...' or 'Sounds good! Next, let's review connected apps...' before presenting the next item. When the user wants help with an action item (e.g. password, MFA), give the full user_facing_text in one message, then ask if they want help with any specific step—do not give steps one at a time. For recognize_phishing (knowledge-only), ask 'Do you have any questions about phishing?' not 'Do you want help doing it?' In the final summary: 'What you did' = only items they completed or skipped; do NOT include items they said IT has to do. Those go only in 'Action items for IT staff.'"
+notes_for_model: "Use for Microsoft 365 users. This checklist includes transition_after_q6, transition_after_insurance_upload, and strong_password_reset_only (for post-phishing password change—no lecture intro). After insurance upload is done, say transition_after_insurance_upload first (you may add the user's first name after 'Thanks for the info'), then the first checklist item. When presenting right after question 7 with no insurance or skipped upload, say transition_after_q6 first. Do not skip the transition; do not lead with 'First, let's make sure you have a strong password.' Walk through items in order (password first, then MFA, review apps, OneDrive, phishing). Before presenting the MFA item, call get_business_profile—if has_mfa_for_all_users is true, skip MFA and use a transition to the next item (e.g. 'We already have MFA enabled, so let's review connected apps...'). When the user says they have MFA (already done, yes, just enabled it), save has_mfa_for_all_users: true. When moving to the next item (starting after password), use a brief transition like 'Great! Next, we'll turn on MFA...' or 'Sounds good! Next, let's review connected apps...' before presenting the next item. For optional action items, after guidance ask: 'Do you want help doing it now? Have you already done it? Or, you can say skip to do this later.' When the user wants help with an action item (e.g. password, MFA), give the full user_facing_text in one message, then ask if they want help with any specific step—do not give steps one at a time. For recognize_phishing (knowledge-only), end with: 'Do you have any questions about phishing?' only—do not add IT escalation lines here. In the final summary: 'What you did' = only items they completed or skipped; do NOT include items they said IT has to do. Those go only in 'Action items for IT staff.'"

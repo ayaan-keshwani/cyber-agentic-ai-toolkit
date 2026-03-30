@@ -1,14 +1,17 @@
-# Scenario: Business Email Compromise (BEC) suspected – e.g. fake request to wire money or change payment details.
+# Scenario: Payment-request scams by email—BEC (boss/vendor impersonation), advance-fee / stranger scams, or wire fraud.
 id: email_bec_suspected
-display_name: "Business email compromise (BEC) suspected – wire transfer or payment request"
+display_name: "Payment request or money scam by email (BEC, advance-fee, or similar)"
 category: email_security
+# Broad "asking for money / payment request" matching lives in Python:
+# load_guidance._query_suggests_bec_money_scam (e.g. "money", "bail", gift cards, wire).
+# Keep a short list here for documentation and keyword hits that still help ranking.
 trigger_signals:
   - "wire transfer"
-  - "boss asked me to send money"
-  - "vendor changed bank account"
-  - "urgent payment request by email"
-  - "CEO wants me to buy gift cards"
   - "business email compromise"
+  - "vendor changed bank account"
+  - "CEO wants me to buy gift cards"
+  - "nigerian prince"
+  - "advance fee"
   - "someone impersonating my boss"
 applies_to: ["gsuite", "m365"]
 severity_level: critical
@@ -16,31 +19,38 @@ source_document_id: ftc-small-business
 
 steps:
   - id: step_1
-    short_title: "Do not send money or change payment details yet"
-    user_facing_text: "Do not wire money, send gift cards, or change bank account or payment details based only on an email or message. Even if it looks like it’s from your boss or a vendor, stop and verify through a separate channel."
-    detail_explanation: "BEC attacks rely on urgency and fake authority. Pausing prevents irreversible loss."
+    short_title: "Already sent money or gift cards?"
+    user_facing_text: "First, have you already sent money, wired funds, bought gift cards, or changed bank or payment details because of this email or message?"
+    detail_explanation: "Establish whether loss already occurred before other steps."
     timing: immediately
     requires_human_professional: false
 
   - id: step_2
-    short_title: "Verify using a different channel"
-    user_facing_text: "Contact the person or vendor using a phone number or method you already have (not from the email). For example, call your boss on their known number or call the vendor’s main line and ask if they really sent the request."
-    detail_explanation: "Verifying out-of-band (phone, in person) avoids relying on the potentially compromised email channel."
+    short_title: "Do not pay based on the email alone"
+    user_facing_text: "Do not wire money, send gift cards, or change bank or payment details based only on an email or message. Pause until you are sure the request is legitimate."
+    detail_explanation: "Stops further loss."
     timing: immediately
     requires_human_professional: false
 
   - id: step_3
+    short_title: "Stranger scam vs. someone you know"
+    user_facing_text: "AGENT: Choose the path that matches what the user described. If it is clearly a stranger scam (for example, a Nigerian prince, lottery win, advance fee, or someone you have never done business with asking for money), say plainly that those are scams: they should not reply, should not try to verify with the scammer, and should delete the message and report it as spam or phishing. Do not tell them to call a vendor or boss to verify a fictional stranger. If instead the request looks like it could be from a real boss, vendor, coworker, or client they know, then explain they should verify using a phone number or contact method they already have—not from the email—before paying or changing anything."
+    detail_explanation: "Avoids applying business verification to obvious advance-fee scams."
+    timing: immediately
+    requires_human_professional: false
+
+  - id: step_4
     short_title: "If you already sent money – act immediately"
-    user_facing_text: "If you already sent money or changed payment details, contact your bank or payment provider immediately and report it as fraud. Also contact your cyber insurance carrier if you have a policy, and consider reporting to the FBI IC3 (ic3.gov) and your state authorities."
-    detail_explanation: "Quick reporting can sometimes help recover funds or limit further loss; insurers and law enforcement need to be notified promptly."
+    user_facing_text: "If you already sent money or changed payment details, contact your bank or payment provider immediately and report it as fraud. AGENT: Call get_business_profile before your reply. If has_cyber_insurance is true, also tell the user to contact their cyber insurance carrier right away. If has_cyber_insurance is false or not set, do not suggest contacting an insurer. Mention considering the FBI IC3 (ic3.gov) and state authorities for serious fraud when appropriate."
+    detail_explanation: "Uses profile so insurance is only recommended when the user actually has coverage."
     timing: immediately
     requires_human_professional: true
 
-  - id: step_4
+  - id: step_5
     short_title: "Report and secure email"
     user_facing_text: "Report the suspicious email to your IT contact or email provider. If you have a work account, your organization may need to check for other compromised accounts and reset passwords or enable MFA."
-    detail_explanation: "BEC often involves compromised or spoofed accounts; securing email helps prevent repeat incidents."
+    detail_explanation: "Reporting helps block repeat attempts."
     timing: within_24_hours
     requires_human_professional: false
 
-notes_for_model: "Use when the user describes a request (especially for wire transfer, gift cards, or payment changes) that came by email and seems to be from a boss or vendor. Treat as high urgency. If money was already sent, emphasize step 3 and getting professional help."
+notes_for_model: "Use when the user describes any email-driven request for money, wire, gift cards, or payment changes—including advance-fee or Nigerian-prince style scams. Prefer this scenario over phishing when money is the main issue. Work steps in order. Step 1 asks about past payment first. Step 3 must branch: stranger scams are not business impersonation—do not frame them as boss/vendor verification. Before mentioning cyber insurance anywhere (especially step 4), call get_business_profile and only mention the insurer if has_cyber_insurance is true. Never say playbook, workflow, tool, or other meta terms. Do not repeat the same closing sentence twice in one reply."

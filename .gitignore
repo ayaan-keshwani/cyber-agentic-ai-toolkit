@@ -8,6 +8,9 @@ data/sessions.db
 data/business_profiles/*.json
 data/uploads/*
 
+# Node (npm install — thousands of files; never commit)
+node_modules/
+
 # Virtual environment
 .venv/
 venv/

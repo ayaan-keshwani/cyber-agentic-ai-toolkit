@@ -14,7 +14,6 @@ from src.tools import (
     advance_playbook_step,
     start_playbook,
     save_insurance_policy,
-    save_insurance_policy_from_file,
 )
 
 _INSTRUCTION_PATH = Path(__file__).resolve().parent.parent / "prompts" / "email_instruction.txt"
@@ -45,6 +44,5 @@ def create_email_protection_agent() -> LlmAgent:
             advance_playbook_step,
             start_playbook,
             save_insurance_policy,
-            save_insurance_policy_from_file,
         ],
     )

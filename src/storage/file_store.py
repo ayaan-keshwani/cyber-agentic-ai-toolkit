@@ -13,18 +13,18 @@ DEFAULT_PROFILE: dict[str, Any] = {
     "business_name": "",
     "business_type": "",
     "country": "US",
-    "state": "",
     "email_platform": "",  # gsuite | m365 | other
     "it_support": "",  # in-house | outsourced | none
     "has_cyber_insurance": None,  # True | False
     "policy_inclusions": "",  # raw text from declarations page; used to check coverage
-    "has_mfa_for_admins": None,
+    "policy_exclusions": "",
+    "insurance_declarations_original_name": "",
+    "insurance_declarations_relpath": "",
+    "insurance_declarations_onboarding_done": False,
     "has_mfa_for_all_users": None,
-    "regular_security_training": None,
     "sends_sensitive_files_via_email_regularly": None,
     "uses_file_sharing_solutions": [],  # e.g. ["drive", "sharepoint"]
     "onboarding_complete": False,
-    "notes": [],
 }
 
 
@@ -47,6 +47,8 @@ def get_business_profile(business_id: str) -> dict[str, Any]:
         return profile
     with open(path, encoding="utf-8") as f:
         data = json.load(f)
+    for k in ("state", "has_mfa_for_admins", "regular_security_training", "notes"):
+        data.pop(k, None)
     for key, default in DEFAULT_PROFILE.items():
         if key not in data:
             data[key] = default

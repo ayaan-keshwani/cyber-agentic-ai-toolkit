@@ -1,71 +1,70 @@
 # Scenario: User suspects they received a phishing email or clicked a suspicious link.
-# Phishing = when a hacker or someone bad tries to trick you into doing something (clicking a link, entering your password, sending money, etc.).
+# Phishing = when a hacker or someone bad tries to trick you into doing something (clicking a link, entering your password, etc.).
 id: email_phishing_suspected
 display_name: "Phishing email suspected or clicked a suspicious link"
 category: email_security
 trigger_signals:
   - "phishing"
   - "suspicious email"
-  - "weird email"
-  - "weird emails"
   - "spam email"
   - "got a suspicious email"
   - "received a suspicious email"
-  - "got a weird email"
-  - "received a weird email"
-  - "email asking for money"
-  - "email asking me for money"
-  - "email asked me for money"
-  - "email requesting money"
   - "clicked a link in an email"
   - "email asked for my password"
-  - "urgent email from boss or vendor asking me to do something"
   - "fake login page"
+  - "clicked suspicious link"
 applies_to: ["gsuite", "m365"]
 severity_level: warning
 source_document_id: cisa-phishing
 
 steps:
   - id: step_0
-    short_title: "First: Did you click on anything?"
-    user_facing_text: "Before we go further—did you click on any links or open any attachments in the email? This helps us know what steps you need."
-    detail_explanation: "If they clicked, we emphasize password change and checking for compromise. If not, we focus on reporting and deleting."
+    short_title: "Get sender, subject, and what felt off"
+    user_facing_text: "Can you share who the email was from (sender address if you have it) and what the subject line said? If you’re not sure, just tell me what felt weird or different about it. That helps tell if it’s something to worry about."
+    detail_explanation: "Gather details before asking about clicks; do not ask about links or attachments in the same turn as this question."
     timing: immediately
     requires_human_professional: false
 
   - id: step_1
-    short_title: "Do not enter any more information"
-    user_facing_text: "Do not enter your password, codes, or any personal or financial information on the page you landed on. If you already did, we'll help you change those in the next steps. Can you confirm—did you enter any password or other info on that page?"
-    detail_explanation: "Stopping further input limits what the attacker can capture. Ask for confirmation so the user knows to respond; if they did enter info, we emphasize password change next."
+    short_title: "Did you click on anything?"
+    user_facing_text: "Before we go further—did you click on any links or open any attachments in the email? This helps us know what steps you need."
+    detail_explanation: "Only after triage (or if the user already gave enough detail). If they clicked, emphasize password change and checking for compromise. If not, focus on reporting and deleting."
     timing: immediately
     requires_human_professional: false
 
   - id: step_2
-    short_title: "Change passwords you entered on the suspicious site"
-    user_facing_text: "AGENT: Call get_checklist (topic email_account_hardening, stack from get_business_profile). Use the strong_password item's user_facing_text for the email password change. Do NOT say 'go to google.com or office.com'—use myaccount.google.com (GSuite) or account.microsoft.com (M365) with the exact steps from the checklist. Also remind them: if they entered any other password on the suspicious page (e.g. bank, Netflix), change that at that service's real website."
-    detail_explanation: "If the phishing page captured a password, changing it revokes the attacker's access. They may have captured any password the user typed (email, bank, social media) so all of those should be changed’."
+    short_title: "Do not enter any more information"
+    user_facing_text: "Do not enter your password, codes, or any personal or financial information on the page you landed on. If you already did, we'll help you change those in the next steps. Can you confirm—did you enter any password or other info on that page?"
+    detail_explanation: "Stopping further input limits what the attacker can capture."
     timing: immediately
     requires_human_professional: false
 
   - id: step_3
-    short_title: "Enable MFA if not already on"
-    user_facing_text: "CRITICAL: Do NOT ask the user 'Do you have MFA?' or 'Is MFA on?'—you MUST call get_business_profile first. If has_mfa_for_all_users is true, skip this step entirely: say 'We already have MFA enabled, so let's check for unauthorized activity' and advance to step_4. Only if has_mfa_for_all_users is false or null: Turn on multi-factor authentication (MFA) for your email so that a second step (e.g. a code on your phone) is required to sign in."
-    detail_explanation: "MFA greatly reduces the risk of someone using a stolen password. You MUST check the profile first—if they already have MFA, skip this step entirely."
+    short_title: "Change passwords you entered on the suspicious site"
+    user_facing_text: "AGENT: Call get_checklist (topic email_account_hardening, stack from get_business_profile). Use the strong_password_reset_only field for changing the email password after a phishing page—NOT the full strong_password item (no 'it's best to have a strong password' intro). If strong_password_reset_only is missing, use only the URL and step-by-step password change lines from strong_password, omitting the opening paragraph about strong passwords. Do NOT say 'go to google.com or office.com'—use myaccount.google.com (GSuite) or account.microsoft.com (M365) with https://. Also remind them: if they entered any other password on the suspicious page (e.g. bank, Netflix), change that at that service's real website."
+    detail_explanation: "Short reset-only instructions; skip generic password hygiene preamble."
     timing: immediately
     requires_human_professional: false
 
   - id: step_4
-    short_title: "Check for unauthorized activity"
-    user_facing_text: "Check your email settings (e.g. forwarding rules, connected apps) and recent sent mail. Remove any forwarding rules or connected apps you didn’t add, and look for emails you didn’t send."
-    detail_explanation: "Phishers often add forwarding or connected apps to maintain access or monitor your mail."
-    timing: within_24_hours
+    short_title: "Enable MFA if not already on"
+    user_facing_text: "CRITICAL: Do NOT ask the user 'Do you have MFA?' or 'Is MFA on?'—you MUST call get_business_profile first. If has_mfa_for_all_users is true, skip this step entirely: say 'We already have MFA enabled, so let's check for unauthorized activity' and advance to step_5. Only if has_mfa_for_all_users is false or null: Turn on multi-factor authentication (MFA) for your email so that a second step (e.g. a code on your phone) is required to sign in."
+    detail_explanation: "MFA greatly reduces the risk of someone using a stolen password."
+    timing: immediately
     requires_human_professional: false
 
   - id: step_5
+    short_title: "Check for unauthorized activity"
+    user_facing_text: "Check your email settings (e.g. forwarding rules, connected apps) and recent sent mail. Remove any forwarding rules or connected apps you didn’t add, and look for emails you didn’t send."
+    detail_explanation: "Phishers often add forwarding or connected apps to maintain access."
+    timing: within_24_hours
+    requires_human_professional: false
+
+  - id: step_6
     short_title: "Report and delete the phishing email"
     user_facing_text: "Report the message as phishing using your email provider’s option (e.g. 'Report phishing'), then delete it. If it’s a work account, notify your IT contact or manager."
     detail_explanation: "Reporting helps the provider block similar messages for you and others."
     timing: within_24_hours
     requires_human_professional: false
 
-notes_for_model: "Use when the user says they got a suspicious email, weird email, phishing, clicked a link, or entered information on a page they’re not sure about. Treat 'weird email' the same as suspicious email. Phishing is when a hacker or someone bad tries to trick you into doing something. Start with step_0: ask if they clicked on anything. Then work through steps in order. For step_1, always include the confirmation question so the user knows to respond. Before step_3 (MFA): call get_business_profile. If has_mfa_for_all_users is true (they said they have MFA at any point—onboarding, this playbook, or earlier), skip step_3—say something like 'We already have MFA enabled, so let's check for unauthorized activity' and go to step_4. Use advance_playbook_step to skip step_3. When they say they've enabled MFA or completed it at this step, save has_mfa_for_all_users: true with update_business_profile. For step_2 (change email password): call get_checklist with topic 'email_account_hardening' and the user's email_platform from get_business_profile. Use the strong_password item's user_facing_text from that checklist for the email password change—it has provider-specific instructions (myaccount.google.com for GSuite, account.microsoft.com for M365). Also remind them: if they entered any other password on the suspicious page (e.g. bank, Netflix), change that too at that service's real website. If they clicked or entered a password, emphasize step_2 and MFA (step_3). If they did NOT click, you can move more quickly to report and delete (step_5). If giving any summary: items they said IT has to do go only in the IT list, never in what they did."
+notes_for_model: "Use when the user describes phishing, suspicious email (not just 'weird email' with no detail—see triage in instructions), spam, clicked a link, fake login, or password request. Do NOT say 'playbook,' 'workflow,' 'tool,' or other meta/dev terms to the user. Work through steps in order by index. step_0: ask for sender, subject, what felt off—do NOT ask about clicks or attachments in the same message. If the user only said 'weird email' with no detail, do triage first and do NOT start this scenario until they have given sender/subject or a clear description—or it is obviously malicious. If after step_0 it sounds like ordinary mail or a false alarm, you may say it’s likely safe and they can report as spam and delete if uncomfortable—then you can end or continue lightly. step_1: ask if they clicked links or attachments. step_2: do not enter more info; confirm if they entered credentials. step_3: password change—use checklist strong_password_reset_only (short steps only). Before step_4 (MFA): call get_business_profile; if has_mfa_for_all_users is true, skip to step_5. When they enable MFA, save has_mfa_for_all_users: true. If they did NOT click anything, you can move more quickly toward report/delete (step_6)."

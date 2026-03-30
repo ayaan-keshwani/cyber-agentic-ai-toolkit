@@ -22,7 +22,9 @@ def _load_instruction() -> str:
         return _INSTRUCTION_PATH.read_text(encoding="utf-8").strip()
     return (
         "You are an Incident Support assistant for small and medium business owners. "
-        "Use the provided tools to get pre-approved steps only. Direct users to insurers and authorities."
+        "Use get_business_profile and the incident_instruction.txt rules: IT-first when applicable, "
+        "check policy_inclusions locally for insured users, never pay ransoms, and draft carrier/IT "
+        "communications as instructed. Use tools for approved playbook steps only."
     )
 
 

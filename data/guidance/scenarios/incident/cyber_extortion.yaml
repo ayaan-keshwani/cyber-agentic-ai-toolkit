@@ -1,0 +1,38 @@
+# Scenario: Cyber extortion (ransom demand without full ransomware deployment, threats to release data, etc.).
+id: incident_cyber_extortion
+display_name: "Cyber extortion or ransom demand"
+category: incident_response
+trigger_signals:
+  - "cyber extortion"
+  - "extortion"
+  - "pay or we will"
+  - "threatening to release"
+  - "demand bitcoin"
+  - "demand cryptocurrency"
+applies_to: ["us-based"]
+severity_level: critical
+source_document_id: cisa-stop-ransomware
+
+steps:
+  - id: step_1
+    short_title: "Do not pay before professionals"
+    user_facing_text: "Do not pay extortion demands or send cryptocurrency until you have spoken with your cyber insurance carrier, IT, or law enforcement, unless they instruct you otherwise in an emergency."
+    detail_explanation: "Paying can fund crime and may affect insurance coverage; professionals help evaluate options."
+    timing: immediately
+    requires_human_professional: true
+
+  - id: step_2
+    short_title: "Preserve messages and evidence"
+    user_facing_text: "Save screenshots, emails, or messages from the attacker. Note dates and times. Share with IT, insurer, or law enforcement as directed."
+    detail_explanation: "Documentation supports investigation and claims."
+    timing: immediately
+    requires_human_professional: false
+
+  - id: step_3
+    short_title: "Report to law enforcement if appropriate"
+    user_facing_text: "Serious extortion can be reported to the FBI via IC3 (ic3.gov) or local FBI field office. Your insurer may also advise on reporting."
+    detail_explanation: "Law enforcement may assist with investigation."
+    timing: within_24_hours
+    requires_human_professional: false
+
+notes_for_model: "Use for threats, demands, or extortion that may not match pure ransomware encryption. If has_cyber_insurance is true, follow incident_instruction.txt section B (insurance workflow) before relying on these steps."

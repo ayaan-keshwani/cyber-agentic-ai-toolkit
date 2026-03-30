@@ -132,7 +132,8 @@ async def run_agent(
         raise ValueError("agent_type must be 'email' or 'incident'")
 
     user_id, session_id = await ensure_session(runner, business_id, agent_type, thread_id)
-    content = types.Content(role="user", parts=[types.Part(text=user_message)])
+    text_in = _user_message_with_context(agent_type, business_id, user_message)
+    content = types.Content(role="user", parts=[types.Part(text=text_in)])
     final_text = ""
     async for event in runner.run_async(
         user_id=user_id,
@@ -173,7 +174,8 @@ async def run_agent_stream(
         raise ValueError("agent_type must be 'email' or 'incident'")
 
     user_id, session_id = await ensure_session(runner, business_id, agent_type, thread_id)
-    content = types.Content(role="user", parts=[types.Part(text=user_message)])
+    text_in = _user_message_with_context(agent_type, business_id, user_message)
+    content = types.Content(role="user", parts=[types.Part(text=text_in)])
     async for event in runner.run_async(
         user_id=user_id,
         session_id=session_id,
@@ -195,6 +197,7 @@ def reset_all_memory() -> None:
     - Deletes the business profile (default).
     - Deletes the session database (all conversation history and state).
     """
+    global _session_service, _email_runner, _incident_runner
     ensure_dirs()
     removed = []
     profile_path = BUSINESS_PROFILES_DIR / "default.json"
@@ -205,6 +208,9 @@ def reset_all_memory() -> None:
     if sessions_path.exists():
         sessions_path.unlink()
         removed.append(str(sessions_path))
+    _session_service = None
+    _email_runner = None
+    _incident_runner = None
     if removed:
         logger.info("Reset complete. Removed: %s", ", ".join(removed))
         print("Removed:", ", ".join(removed))
@@ -219,6 +225,53 @@ def _is_onboarding_complete(business_id: str) -> bool:
     profile = get_business_profile(business_id)
     return bool(profile.get("onboarding_complete")) and bool(
         (profile.get("email_platform") or "").strip()
+    )
+
+
+def is_onboarding_complete(business_id: str) -> bool:
+    """Public check used by the web API."""
+    return _is_onboarding_complete(business_id)
+
+
+def _user_message_with_context(
+    agent_type: str,
+    business_id: str,
+    user_message: str,
+) -> str:
+    """Inject session hints so agents use the business profile consistently."""
+    from src.storage.file_store import get_business_profile
+
+    if agent_type == "incident":
+        profile = get_business_profile(business_id)
+        hi = profile.get("has_cyber_insurance")
+        it_raw = (profile.get("it_support") or "").strip().lower()
+        if it_raw in ("in house", "inhouse"):
+            it_raw = "in-house"
+        if not it_raw:
+            it_raw = "none"
+        lines = [
+            "[System: Business profile context (always call get_business_profile to confirm):",
+            f"has_cyber_insurance={hi is True}, it_support={it_raw}.",
+        ]
+        if hi is True:
+            lines.append(
+                "The user has cyber insurance: do not ask whether they have a policy; phrase advice accordingly."
+            )
+        lines.append(
+            "Use it_support to describe IT: for in-house or outsourced, refer to their IT team or provider "
+            "directly. Never use vague wording like 'if you have IT support'."
+        )
+        lines.append("End of system context.]\n")
+        return "\n".join(lines) + "\n" + user_message
+
+    if agent_type != "email":
+        return user_message
+    if not _is_onboarding_complete(business_id):
+        return user_message
+    return (
+        "[System: Onboarding is already complete. Do not ask onboarding questions or repeat the "
+        "welcome. Answer the user's message directly.]\n\n"
+        + user_message
     )
 
 
@@ -240,8 +293,8 @@ def _agent_selected_message(agent_type: str) -> str:
     if agent_type == "incident":
         return (
             "You're now connected to the Incident Support agent. "
-            "I can help with serious cyber incidents like wire fraud and ransomware, "
-            "and direct you to the right professionals (bank, insurer, authorities). "
+            "I can help with serious cyber incidents like ransomware, cyber extortion, data breaches, wire fraud, "
+            "and direct you to the right professionals (IT, bank, insurer, authorities). "
             "What's going on?"
         )
     return (

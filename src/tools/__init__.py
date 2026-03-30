@@ -8,7 +8,7 @@ from src.tools.playbook_state import (
     advance_playbook_step,
     start_playbook,
 )
-from src.tools.insurance import save_insurance_policy, save_insurance_policy_from_file
+from src.tools.insurance import save_insurance_policy
 
 __all__ = [
     "get_business_profile",
@@ -20,5 +20,4 @@ __all__ = [
     "advance_playbook_step",
     "start_playbook",
     "save_insurance_policy",
-    "save_insurance_policy_from_file",
 ]

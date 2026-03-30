@@ -17,8 +17,9 @@ def get_checklist(
     Get a pre-approved checklist for ongoing hygiene (e.g. email account hardening).
     - topic: e.g. "email_account_hardening".
     - stack: "gsuite" or "m365" (if not provided, uses the business profile's email_platform).
-    The checklist may include transition_after_q6: when you are presenting this right after the user
-    answered question 6 (cybersecurity insurance), say that text first, then the first item. Do not skip it.
+    The checklist may include transition_after_q6 (no insurance or skipping upload),
+    transition_after_insurance_upload (after declarations upload), and strong_password_reset_only
+    (short password-change steps after phishing—no long intro). Use the one that matches the flow.
     Use the checklist items to walk the user through best practices. Do not add steps not in the checklist.
     """
     if not tool_context:

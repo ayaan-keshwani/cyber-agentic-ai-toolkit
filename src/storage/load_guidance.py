@@ -72,6 +72,56 @@ def get_scenario_by_id(scenario_id: str) -> dict[str, Any] | None:
     return None
 
 
+def _scenario_applies_to_profile(
+    scenario: dict[str, Any],
+    known_platforms: set[str],
+) -> bool:
+    """Same platform filter as search_scenarios loop."""
+    applies_to = [str(a).lower() for a in (scenario.get("applies_to") or [])]
+    if not applies_to:
+        return True
+    if "us-based" in applies_to:
+        return True
+    if known_platforms and not (known_platforms & set(applies_to)):
+        return False
+    return True
+
+
+def _query_suggests_bec_money_scam(query_lower: str) -> bool:
+    """
+    Broad matching for payment-request / money scams (BEC, family bail, wire fraud, etc.).
+    We cannot list every phrase in YAML; this centralizes likely-BEC queries.
+    """
+    if not query_lower.strip():
+        return False
+    # "Money" is the main catch-all (e.g. family member asking for bail money).
+    if "money" in query_lower:
+        return True
+    if "bail" in query_lower:
+        return True
+    if "gift card" in query_lower:
+        return True
+    if "wire transfer" in query_lower or "wire money" in query_lower:
+        return True
+    if "western union" in query_lower:
+        return True
+    if "venmo" in query_lower or "zelle" in query_lower:
+        return True
+    if "ransom" in query_lower:
+        return True
+    if "invoice" in query_lower and any(
+        w in query_lower for w in ("pay", "payment", "wire", "urgent", "email")
+    ):
+        return True
+    if "payment" in query_lower and any(
+        w in query_lower for w in ("email", "send", "request", "wire", "urgent")
+    ):
+        return True
+    if "cryptocurrency" in query_lower or "bitcoin" in query_lower:
+        return True
+    return False
+
+
 def search_scenarios(
     query: str,
     category: str | None = None,
@@ -116,7 +166,27 @@ def search_scenarios(
         fallback = get_scenario_by_id("fallback_no_specific_playbook")
         if fallback:
             results.append(fallback)
-    return results
+    # Deduplicate by scenario id (same scenario can match multiple signals)
+    seen: set[str] = set()
+    unique: list[dict[str, Any]] = []
+    for s in results:
+        sid = str(s.get("id") or "")
+        if not sid or sid in seen:
+            continue
+        seen.add(sid)
+        unique.append(s)
+    # Broad money/payment-request → BEC (see _query_suggests_bec_money_scam; not only YAML triggers)
+    bec = get_scenario_by_id("email_bec_suspected")
+    if (
+        bec
+        and _query_suggests_bec_money_scam(query_lower)
+        and _scenario_applies_to_profile(bec, known_platforms)
+    ):
+        if any(x.get("id") == "email_bec_suspected" for x in unique):
+            unique = [bec] + [x for x in unique if x.get("id") != "email_bec_suspected"]
+        else:
+            unique = [bec] + unique
+    return unique
 
 
 def get_all_checklists() -> list[dict[str, Any]]:

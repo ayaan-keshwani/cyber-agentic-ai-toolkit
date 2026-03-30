@@ -1,0 +1,39 @@
+# Scenario: Suspected or confirmed data breach, unauthorized access, or data leak.
+id: incident_data_breach
+display_name: "Data breach or unauthorized access to data"
+category: incident_response
+trigger_signals:
+  - "data breach"
+  - "breach"
+  - "leaked data"
+  - "unauthorized access"
+  - "stolen data"
+  - "customer data exposed"
+  - "database hacked"
+applies_to: ["us-based"]
+severity_level: critical
+source_document_id: cisa-stop-ransomware
+
+steps:
+  - id: step_1
+    short_title: "Involve professionals early"
+    user_facing_text: "If you have IT support or cyber insurance, involve them immediately. Do not try to investigate or notify third parties alone unless you are told to."
+    detail_explanation: "Breach response often has legal and regulatory steps; your insurer or counsel may need to lead."
+    timing: immediately
+    requires_human_professional: true
+
+  - id: step_2
+    short_title: "Preserve evidence"
+    user_facing_text: "Avoid deleting logs or wiping systems before professionals advise. Note what you observed and when."
+    detail_explanation: "Preservation helps investigation and any insurance claim."
+    timing: immediately
+    requires_human_professional: false
+
+  - id: step_3
+    short_title: "Report to authorities as advised"
+    user_facing_text: "Your insurer, counsel, or law enforcement may tell you to report to agencies (for example FBI IC3 or local police). Follow their guidance on timing and content."
+    detail_explanation: "Reporting paths depend on jurisdiction and sector."
+    timing: within_24_hours
+    requires_human_professional: true
+
+notes_for_model: "Use for suspected or confirmed loss or exposure of sensitive data. If has_cyber_insurance is true, follow incident_instruction.txt section B (insurance workflow) before relying on these steps."
